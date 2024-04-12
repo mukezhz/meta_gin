@@ -18,11 +18,14 @@ func main() {
 	}
 	db.AutoMigrate(&User{})
 
+	repository := NewRepository[User](db)
+	service := NewService[User](repository)
+
 	router := gin.Default()
 	router.Use(AuthMiddleware(config, "admin"))
 
 	userDTOHandler := NewUserDTOHandler()
-	userHandler := NewCRUDHandler[User, UserRequestDTO, UserResponseDTO](db, userDTOHandler)
+	userHandler := NewCRUDHandler[User, UserRequestDTO, UserResponseDTO](db, service, userDTOHandler)
 	router.POST("/users", CheckPermissionDecorator(userHandler.Create()))
 	router.GET("/users", AuthMiddleware(config, "editor"), CheckPermissionDecorator(userHandler.List()))
 

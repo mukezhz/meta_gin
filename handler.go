@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,10 +11,15 @@ import (
 type CRUDHandler[M any, ReqDTO any, ResDTO any] struct {
 	DB         *gorm.DB
 	DTOHandler *DTOHandler[M, ReqDTO, ResDTO]
+	Service    *Service[M]
 }
 
-func NewCRUDHandler[M any, ReqDTO any, ResDTO any](db *gorm.DB, dtoHandler *DTOHandler[M, ReqDTO, ResDTO]) *CRUDHandler[M, ReqDTO, ResDTO] {
-	return &CRUDHandler[M, ReqDTO, ResDTO]{DB: db, DTOHandler: dtoHandler}
+func NewCRUDHandler[M any, ReqDTO any, ResDTO any](
+	db *gorm.DB,
+	service *Service[M],
+	dtoHandler *DTOHandler[M, ReqDTO, ResDTO],
+) *CRUDHandler[M, ReqDTO, ResDTO] {
+	return &CRUDHandler[M, ReqDTO, ResDTO]{DB: db, Service: service, DTOHandler: dtoHandler}
 }
 
 func (h *CRUDHandler[M, ReqDTO, ResDTO]) Create() gin.HandlerFunc {
@@ -25,7 +31,7 @@ func (h *CRUDHandler[M, ReqDTO, ResDTO]) Create() gin.HandlerFunc {
 		}
 
 		model := h.DTOHandler.ToModel(dto)
-		h.DB.Create(&model)
+		h.Service.Create(model)
 		resDTO := h.DTOHandler.FromModel(model)
 		c.JSON(http.StatusCreated, resDTO)
 	}
@@ -33,13 +39,16 @@ func (h *CRUDHandler[M, ReqDTO, ResDTO]) Create() gin.HandlerFunc {
 
 func (h *CRUDHandler[M, ReqDTO, ResDTO]) List() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var models []M
-		h.DB.Find(&models)
+		models, count, err := h.Service.FindWithPagination(1, 10)
+		log.Println("COUNT:", count)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 		var dtos []ResDTO
 		for _, model := range models {
 			dtos = append(dtos, h.DTOHandler.FromModel(model))
 		}
 		c.JSON(http.StatusOK, dtos)
-		return
 	}
 }
