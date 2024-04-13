@@ -1,4 +1,4 @@
-package main
+package meta_gin
 
 import "gorm.io/gorm"
 
@@ -25,15 +25,15 @@ func NewRepository[M any](db *gorm.DB) *Repository[M] {
 	return &Repository[M]{DB: db}
 }
 
-func (r *Repository[M]) Create(model M) error {
-	return r.DB.Create(&model).Error
+func (r *Repository[M]) Create(model M) (M, error) {
+	return model, r.DB.Create(&model).Error
 }
 
 func (r *Repository[M]) FindOrCreate(model M) error {
 	return r.DB.FirstOrCreate(&model).Error
 }
 
-func (r *Repository[M]) FindByID(id uint) (M, error) {
+func (r *Repository[M]) FindByID(id string) (M, error) {
 	var model M
 	err := r.DB.First(&model, id).Error
 	return model, err
@@ -45,6 +45,10 @@ func (r *Repository[M]) Update(model M) error {
 
 func (r *Repository[M]) Delete(model M) error {
 	return r.DB.Delete(&model).Error
+}
+
+func (r *Repository[M]) DeleteByID(id string) error {
+	return r.DB.Delete(new(M), id).Error
 }
 
 type QueryOption func(db *gorm.DB) *gorm.DB

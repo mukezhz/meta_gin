@@ -1,3 +1,13 @@
 [roles]
 admin = ["can_view", "can_edit", "can_delete"]
 editor = ["can_view", "can_edit"]
+
+
+[[routes]]
+role = "editor"
+path = "/users"
+methods = ["GET", "POST"]
+
+# [[routes]]
+# [routes.posts]
+# posts = "admin"

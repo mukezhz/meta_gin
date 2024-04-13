@@ -1,11 +1,11 @@
 meta {
-  name: create user
+  name: get users
   type: http
   seq: 2
 }
 
-post {
-  url: http://localhost:8888/users
+get {
+  url: {{domainv1}}/users
   body: json
   auth: none
 }

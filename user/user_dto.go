@@ -1,4 +1,4 @@
-package main
+package user
 
 type UserRequestDTO struct {
 	Name  string `json:"name" binding:"required"`

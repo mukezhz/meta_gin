@@ -2,12 +2,15 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/mukezhz/meta_gin/meta_gin"
+	"github.com/mukezhz/meta_gin/post"
+	"github.com/mukezhz/meta_gin/user"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 func main() {
-	config, err := LoadConfig("config.toml")
+	config, err := meta_gin.LoadConfig("config.toml")
 	if err != nil {
 		panic("failed to load config: " + err.Error())
 	}
@@ -16,18 +19,19 @@ func main() {
 	if err != nil {
 		panic("failed to connect database")
 	}
-	db.AutoMigrate(&User{})
-
-	repository := NewRepository[User](db)
-	service := NewService[User](repository)
+	err = db.AutoMigrate(&user.User{}, &post.Post{})
+	if err != nil {
+		panic("failed to migrate database")
+	}
 
 	router := gin.Default()
-	router.Use(AuthMiddleware(config, "admin"))
+	router.Use(meta_gin.AuthMiddleware(config, "admin"))
 
-	userDTOHandler := NewUserDTOHandler()
-	userHandler := NewCRUDHandler[User, UserRequestDTO, UserResponseDTO](db, service, userDTOHandler)
-	router.POST("/users", CheckPermissionDecorator(userHandler.Create()))
-	router.GET("/users", AuthMiddleware(config, "editor"), CheckPermissionDecorator(userHandler.List()))
+	user.GetUserConfig(db, config, router)
+	post.GetPostConfig(db, config, router)
 
-	router.Run(":8888")
+	err = router.Run(":8888")
+	if err != nil {
+		panic("failed to run server")
+	}
 }

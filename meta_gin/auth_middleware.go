@@ -1,16 +1,10 @@
-package main
+package meta_gin
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
-
-type Permissions struct {
-	CanView   bool `toml:"can_view"`
-	CanEdit   bool `toml:"can_edit"`
-	CanDelete bool `toml:"can_delete"`
-}
 
 func AuthMiddleware(config *Config, userRole string) gin.HandlerFunc {
 	return func(c *gin.Context) {

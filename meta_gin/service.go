@@ -1,4 +1,4 @@
-package main
+package meta_gin
 
 type Service[M any] struct {
 	Repository *Repository[M]
@@ -8,7 +8,7 @@ func NewService[M any](repository *Repository[M]) *Service[M] {
 	return &Service[M]{Repository: repository}
 }
 
-func (s *Service[M]) Create(model M) error {
+func (s *Service[M]) Create(model M) (M, error) {
 	return s.Repository.Create(model)
 }
 
@@ -16,7 +16,7 @@ func (s *Service[M]) FindOrCreate(model M) error {
 	return s.Repository.FindOrCreate(model)
 }
 
-func (s *Service[M]) FindByID(id uint) (M, error) {
+func (s *Service[M]) FindByID(id string) (M, error) {
 	return s.Repository.FindByID(id)
 }
 
@@ -26,6 +26,10 @@ func (s *Service[M]) Update(model M) error {
 
 func (s *Service[M]) Delete(model M) error {
 	return s.Repository.Delete(model)
+}
+
+func (s *Service[M]) DeleteByID(id string) error {
+	return s.Repository.DeleteByID(id)
 }
 
 func (s *Service[M]) FindWithPagination(page, pageSize int) ([]M, int64, error) {
