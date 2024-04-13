@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: {{domainv1}}/users
+  url: {{domainv1}}/users?limit=0
   body: json
   auth: none
+}
+
+query {
+  limit: 0
 }
 
 body:json {

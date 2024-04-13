@@ -19,4 +19,8 @@ func GetUserConfig(db *gorm.DB, config *meta_gin.Config, router *gin.Engine) {
 			Decorators:  []meta_gin.Decorator{meta_gin.NewPermissionDecorator()},
 		},
 	)
+	// Add a custom route
+	router.Group("/api").Group("/v1").Group("/users").GET("/hello", func(c *gin.Context) {
+		c.JSON(200, gin.H{"message": "Hello, World!"})
+	})
 }

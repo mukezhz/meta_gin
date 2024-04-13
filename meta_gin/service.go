@@ -32,10 +32,14 @@ func (s *Service[M]) DeleteByID(id string) error {
 	return s.Repository.DeleteByID(id)
 }
 
-func (s *Service[M]) FindWithPagination(page, pageSize int) ([]M, int64, error) {
+func (s *Service[M]) Find() ([]M, error) {
+	return s.Repository.Find()
+}
+
+func (s *Service[M]) FindWithPagination(page, pageSize int) (PaginatedResult[M], error) {
 	var count int64 = 0
 	res, err := s.Repository.Find(WithPagination(page, pageSize), WithCount(&count))
-	return res, count, err
+	return PaginatedResult[M]{Total: count, Items: res, HasNext: count > int64(page*pageSize)}, err
 }
 
 func (s *Service[M]) FindWithCondition(condition string, args ...interface{}) ([]M, error) {
