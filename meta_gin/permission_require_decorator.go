@@ -1,13 +1,19 @@
 package meta_gin
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func CheckPermissionDecorator(handler gin.HandlerFunc) gin.HandlerFunc {
+type PermissionDecorator struct {
+}
+
+func NewPermissionDecorator() *PermissionDecorator {
+	return &PermissionDecorator{}
+}
+
+func (d *PermissionDecorator) Decorate(handler gin.HandlerFunc) gin.HandlerFunc {
 	requiredPermission := ""
 	return func(c *gin.Context) {
 		switch c.Request.Method {
@@ -29,13 +35,13 @@ func CheckPermissionDecorator(handler gin.HandlerFunc) gin.HandlerFunc {
 
 		permissions, exists := c.Get("permissions")
 		if !exists {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Permissions not found"})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Permissions not found"})
 			return
 		}
 		perms := permissions.(map[string]bool)
-		log.Println(perms, requiredPermission)
+
 		if !perms[requiredPermission] {
-			c.JSON(http.StatusForbidden, gin.H{"error": "Insufficient permissions"})
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Insufficient permissions"})
 			return
 		}
 		handler(c)

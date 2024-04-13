@@ -16,6 +16,7 @@ func GetUserConfig(db *gorm.DB, config *meta_gin.Config, router *gin.Engine) {
 			Version:     "v1",
 			GroupName:   "users",
 			Middlewares: []gin.HandlerFunc{meta_gin.AuthMiddleware(config, "editor")},
+			Decorators:  []meta_gin.Decorator{meta_gin.NewPermissionDecorator()},
 		},
 	)
 }
