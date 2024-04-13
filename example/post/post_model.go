@@ -4,8 +4,8 @@ import "gorm.io/gorm"
 
 type Post struct {
 	gorm.Model
-	Name  string
-	Email string
+	Title  string
+	Author string
 }
 
 func (u Post) TableName() string {

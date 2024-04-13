@@ -1,0 +1,18 @@
+meta {
+  name: get post
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{domainv1}}/posts
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "test",
+    "email": "test@test.com"
+  }
+}

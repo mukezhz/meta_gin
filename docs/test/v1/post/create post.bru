@@ -1,0 +1,18 @@
+meta {
+  name: create post
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{domainv1}}/posts
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "post",
+    "author": "test@test.com"
+  }
+}

@@ -1,6 +1,6 @@
 [roles]
 admin = ["can_view", "can_edit", "can_delete"]
-editor = ["can_view", "can_edit"]
+editor = ["can_view", "can_edit", "can_delete"]
 
 
 [[routes]]

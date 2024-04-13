@@ -41,7 +41,7 @@ func (h *CRUDHandler[M, ReqDTO, ResDTO]) Create() gin.HandlerFunc {
 			return
 		}
 		resDTO := h.DTOHandler.FromModel(m)
-		c.JSON(http.StatusCreated, resDTO)
+		c.JSON(http.StatusCreated, gin.H{"data": resDTO})
 	}
 }
 
@@ -69,15 +69,15 @@ func (h *CRUDHandler[M, ReqDTO, ResDTO]) Get() gin.HandlerFunc {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
-		dto := h.DTOHandler.FromModel(model)
-		c.JSON(http.StatusOK, dto)
+		resDTO := h.DTOHandler.FromModel(model)
+		c.JSON(http.StatusOK, gin.H{"data": resDTO})
 	}
 }
 
 func (h *CRUDHandler[M, ReqDTO, ResDTO]) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
-		model, err := h.Service.FindByID(id)
+		_, err := h.Service.FindByID(id)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
@@ -89,14 +89,14 @@ func (h *CRUDHandler[M, ReqDTO, ResDTO]) Update() gin.HandlerFunc {
 			return
 		}
 
-		model = h.DTOHandler.ToModel(dto)
+		model := h.DTOHandler.ToModel(dto)
 		err = h.Service.Update(model)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		resDTO := h.DTOHandler.FromModel(model)
-		c.JSON(http.StatusOK, resDTO)
+		c.JSON(http.StatusOK, gin.H{"data": resDTO})
 	}
 }
 
@@ -108,7 +108,7 @@ func (h *CRUDHandler[M, ReqDTO, ResDTO]) DeleteByID() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusNoContent, nil)
+		c.JSON(http.StatusOK, gin.H{"message": "deleted"})
 	}
 }
 
@@ -126,6 +126,6 @@ func (h *CRUDHandler[M, ReqDTO, ResDTO]) Delete() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusNoContent, nil)
+		c.JSON(http.StatusOK, gin.H{"message": "deleted"})
 	}
 }
