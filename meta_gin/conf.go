@@ -5,57 +5,65 @@ import (
 	"gorm.io/gorm"
 )
 
+type SetupConfig[M Model, ReqDTO, ResDTO any] struct {
+	DB          *gorm.DB
+	Router      *gin.Engine
+	Config      *Config
+	DTOHandler  *DTOHandler[M, ReqDTO, ResDTO]
+	Version     string
+	GroupName   string
+	Middlewares []gin.HandlerFunc
+}
+
 func SetupModelRoutes[M Model, ReqDTO, ResDTO any](
-	db *gorm.DB,
-	router *gin.Engine,
-	config *Config,
-	dtoHandler *DTOHandler[M, ReqDTO, ResDTO],
-	version string,
-	groupName string,
+	setupConfig SetupConfig[M, ReqDTO, ResDTO],
 ) {
-	repository := NewRepository[M](db)
+	if setupConfig.Config != nil && (setupConfig.Config.Roles != nil && len(setupConfig.Middlewares) == 0) {
+		setupConfig.Middlewares = append(setupConfig.Middlewares, AuthMiddleware(setupConfig.Config, "editor"))
+	}
+	repository := NewRepository[M](setupConfig.DB)
 	service := NewService[M](repository)
-	userHandler := NewCRUDHandler[M, ReqDTO, ResDTO](db, service, dtoHandler)
-	userRouter := NewRouteHandler[M, ReqDTO, ResDTO](userHandler, router)
+	userHandler := NewCRUDHandler[M, ReqDTO, ResDTO](setupConfig.DB, service, setupConfig.DTOHandler)
+	userRouter := NewRouteHandler[M, ReqDTO, ResDTO](userHandler, setupConfig.Router)
 	userConfig := RouteConfig{
-		Version:   version,
-		GroupName: groupName,
+		Version:   setupConfig.Version,
+		GroupName: setupConfig.GroupName,
 		Routes: []RouteInfo{
 			{
 				Path:        "/",
 				Method:      "POST",
 				Handler:     CheckPermissionDecorator(userHandler.Create()),
-				Middlewares: []gin.HandlerFunc{AuthMiddleware(config, "editor")},
+				Middlewares: setupConfig.Middlewares,
 			},
 			{
 				Path:        "/",
 				Method:      "GET",
 				Handler:     CheckPermissionDecorator(userHandler.List()),
-				Middlewares: []gin.HandlerFunc{AuthMiddleware(config, "editor")},
+				Middlewares: setupConfig.Middlewares,
 			},
 			{
 				Path:        ":id/",
 				Method:      "GET",
 				Handler:     CheckPermissionDecorator(userHandler.Get()),
-				Middlewares: []gin.HandlerFunc{AuthMiddleware(config, "editor")},
+				Middlewares: setupConfig.Middlewares,
 			},
 			{
 				Path:        ":id/",
 				Method:      "PUT",
 				Handler:     CheckPermissionDecorator(userHandler.Update()),
-				Middlewares: []gin.HandlerFunc{AuthMiddleware(config, "editor")},
+				Middlewares: setupConfig.Middlewares,
 			},
 			{
 				Path:        ":id/",
 				Method:      "DELETE",
 				Handler:     CheckPermissionDecorator(userHandler.DeleteByID()),
-				Middlewares: []gin.HandlerFunc{AuthMiddleware(config, "editor")},
+				Middlewares: setupConfig.Middlewares,
 			},
 			{
 				Path:        "/",
 				Method:      "DELETE",
 				Handler:     CheckPermissionDecorator(userHandler.Delete()),
-				Middlewares: []gin.HandlerFunc{AuthMiddleware(config, "editor")},
+				Middlewares: setupConfig.Middlewares,
 			},
 		},
 	}

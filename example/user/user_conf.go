@@ -8,11 +8,14 @@ import (
 
 func GetUserConfig(db *gorm.DB, config *meta_gin.Config, router *gin.Engine) {
 	meta_gin.SetupModelRoutes[User, UserRequestDTO, UserResponseDTO](
-		db,
-		router,
-		config,
-		NewUserDTOHandler(),
-		"v1",
-		"users",
+		meta_gin.SetupConfig[User, UserRequestDTO, UserResponseDTO]{
+			DB:          db,
+			Router:      router,
+			Config:      config,
+			DTOHandler:  NewUserDTOHandler(),
+			Version:     "v1",
+			GroupName:   "users",
+			Middlewares: []gin.HandlerFunc{meta_gin.AuthMiddleware(config, "editor")},
+		},
 	)
 }
