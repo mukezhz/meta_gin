@@ -1,5 +1,9 @@
 # meta_gin: Meta Framework of Gin
 
+**NOTE: Please don't use this in production we are testing it.**
+
+**NOTE: Structure of the projected is subjected to change util it reaches 1.0.0**
+
 ## Reason to develop:
 
 ```
@@ -16,11 +20,10 @@ As a lazy software engineer, I don't want to write the same code repeatedly, whi
 ---
 
 ## This much code for the CRUD 🕶️
+![meta_gin](https://github.com/mukezhz/meta_gin/assets/43813670/dc033fce-b7fb-40d4-a110-f846172e5a2c)
 
+Please check example
 
-**NOTE: Please don't use this in production we are testing it.**
-
-**NOTE: Structure is the projected is subjected to change util it reaches 1.0.0**
 
 ## Contribution
 - As I am learning Go and Gin myself, I would love to see your feedback and suggestions.
