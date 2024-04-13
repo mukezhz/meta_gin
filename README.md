@@ -24,6 +24,11 @@ As a lazy software engineer, I don't want to write the same code repeatedly, whi
 
 Please check example
 
+### TODO:
+- [ ] allow support to add custom middlewares
+- [ ] allow support to add extend the CRUD by injecting custom logic
+- [ ] make structure cleaner and less bloat
+- [ ] use this framework and build demo project
 
 ## Contribution
 - As I am learning Go and Gin myself, I would love to see your feedback and suggestions.
