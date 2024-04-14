@@ -9,9 +9,10 @@ import (
 )
 
 type CreateHandler[M Model, ReqDTO any, ResDTO any] struct {
-	DB         *gorm.DB
-	DTOHandler DTOHandler[M, ReqDTO, ResDTO]
-	Service    *Service[M]
+	DB               *gorm.DB
+	DTOHandler       DTOHandler[M, ReqDTO, ResDTO]
+	Service          *Service[M]
+	ServiceExecuters []ServiceExecutor[M]
 }
 
 func NewCreateHandler[M Model, ReqDTO any, ResDTO any](
@@ -26,6 +27,12 @@ func NewCreateHandler[M Model, ReqDTO any, ResDTO any](
 	}
 }
 
+func (h *CreateHandler[M, ReqDTO, ResDTO]) AddServiceExecuter(
+	serviceExecuter ServiceExecutor[M],
+) {
+	h.ServiceExecuters = append(h.ServiceExecuters, serviceExecuter)
+}
+
 func (h *CreateHandler[M, ReqDTO, ResDTO]) GetName() string {
 	return "create_handler"
 }
@@ -36,13 +43,11 @@ func (h *CreateHandler[M, ReqDTO, ResDTO]) Method() string {
 
 func (h *CreateHandler[M, ReqDTO, ResDTO]) Handlers() map[string]gin.HandlerFunc {
 	return map[string]gin.HandlerFunc{
-		"/": h.Create(nil),
+		"/": h.Create(),
 	}
 }
 
-func (h *CreateHandler[M, ReqDTO, ResDTO]) Create(
-	services ...ServiceExecutor[M],
-) gin.HandlerFunc {
+func (h *CreateHandler[M, ReqDTO, ResDTO]) Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var dto ReqDTO
 		if err := ctx.ShouldBindJSON(&dto); err != nil {
@@ -51,14 +56,14 @@ func (h *CreateHandler[M, ReqDTO, ResDTO]) Create(
 		}
 		model := h.DTOHandler.ToModel(dto)
 		c := context.WithValue(ctx.Request.Context(), dtoKey, dto)
-		for _, service := range services {
+		for _, service := range h.ServiceExecuters {
 			if service != nil {
 				m, err := service.Execute(c, &model)
 				if err != nil {
 					ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 					return
 				}
-				model = m
+				model = *m
 			}
 		}
 		m, err := h.Service.Create(model)

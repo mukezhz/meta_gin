@@ -9,9 +9,16 @@ import (
 )
 
 type DeleteHandler[M Model, ReqDTO any, ResDTO any] struct {
-	DB         *gorm.DB
-	DTOHandler DTOHandler[M, ReqDTO, ResDTO]
-	Service    *Service[M]
+	DB               *gorm.DB
+	DTOHandler       DTOHandler[M, ReqDTO, ResDTO]
+	Service          *Service[M]
+	ServiceExecuters []ServiceExecutor[M]
+}
+
+func (h *DeleteHandler[M, ReqDTO, ResDTO]) AddServiceExecuter(
+	serviceExecuter ServiceExecutor[M],
+) {
+	h.ServiceExecuters = append(h.ServiceExecuters, serviceExecuter)
 }
 
 func NewDeleteHandler[M Model, ReqDTO any, ResDTO any](
@@ -36,16 +43,16 @@ func (h *DeleteHandler[M, ReqDTO, ResDTO]) Method() string {
 
 func (h *DeleteHandler[M, ReqDTO, ResDTO]) Handlers() map[string]gin.HandlerFunc {
 	return map[string]gin.HandlerFunc{
-		"/":    h.Delete(nil),
-		"/:id": h.DeleteByID(nil),
+		"/":    h.Delete(),
+		"/:id": h.DeleteByID(),
 	}
 }
 
-func (h *DeleteHandler[M, ReqDTO, ResDTO]) DeleteByID(services ...ServiceExecutor[M]) gin.HandlerFunc {
+func (h *DeleteHandler[M, ReqDTO, ResDTO]) DeleteByID() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id := ctx.Param("id")
 		c := context.WithValue(ctx.Request.Context(), resID, id)
-		for _, service := range services {
+		for _, service := range h.ServiceExecuters {
 			if service != nil {
 				service.Execute(c, nil)
 			}

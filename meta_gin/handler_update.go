@@ -9,9 +9,10 @@ import (
 )
 
 type UpdateHandler[M Model, ReqDTO any, ResDTO any] struct {
-	DB         *gorm.DB
-	DTOHandler DTOHandler[M, ReqDTO, ResDTO]
-	Service    *Service[M]
+	DB               *gorm.DB
+	DTOHandler       DTOHandler[M, ReqDTO, ResDTO]
+	Service          *Service[M]
+	ServiceExecuters []ServiceExecutor[M]
 }
 
 func NewUpdateHandler[M Model, ReqDTO any, ResDTO any](
@@ -24,6 +25,12 @@ func NewUpdateHandler[M Model, ReqDTO any, ResDTO any](
 		Service:    service,
 		DTOHandler: dtoHandler,
 	}
+}
+
+func (h *UpdateHandler[M, ReqDTO, ResDTO]) AddServiceExecuter(
+	serviceExecuter ServiceExecutor[M],
+) {
+	h.ServiceExecuters = append(h.ServiceExecuters, serviceExecuter)
 }
 
 func (h *UpdateHandler[M, ReqDTO, ResDTO]) GetName() string {
@@ -40,7 +47,7 @@ func (h *UpdateHandler[M, ReqDTO, ResDTO]) Handlers() map[string]gin.HandlerFunc
 	}
 }
 
-func (h *UpdateHandler[M, ReqDTO, ResDTO]) Update(services ...ServiceExecutor[M]) gin.HandlerFunc {
+func (h *UpdateHandler[M, ReqDTO, ResDTO]) Update() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id := ctx.Param("id")
 		model, err := h.Service.FindByID(id)
@@ -50,7 +57,7 @@ func (h *UpdateHandler[M, ReqDTO, ResDTO]) Update(services ...ServiceExecutor[M]
 		}
 
 		c := context.WithValue(ctx.Request.Context(), resID, id)
-		for i, service := range services {
+		for i, service := range h.ServiceExecuters {
 			if service != nil {
 				service.Execute(c, &model)
 			}
@@ -67,7 +74,7 @@ func (h *UpdateHandler[M, ReqDTO, ResDTO]) Update(services ...ServiceExecutor[M]
 
 		model = h.DTOHandler.ToModel(dto)
 		c = context.WithValue(ctx.Request.Context(), dtoKey, dto)
-		for i, service := range services {
+		for i, service := range h.ServiceExecuters {
 			if i == 0 {
 				continue
 			}

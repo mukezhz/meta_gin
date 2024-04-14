@@ -5,7 +5,7 @@ import (
 )
 
 type ServiceExecutor[M any] interface {
-	Execute(context context.Context, model *M) (M, error)
+	Execute(context context.Context, model *M) (*M, error)
 }
 
 type QueryExecutor[M any] interface {

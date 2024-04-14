@@ -19,7 +19,7 @@ type RouteConfig struct {
 	Routes    []RouteInfo
 }
 
-func RegisterRoutes[M Model, ReqDTO any, ResDTO any](router *RouteHandler[M, ReqDTO, ResDTO], config RouteConfig) {
+func RegisterRoutes[M Model](router *RouteHandler[M], config RouteConfig) {
 	api := router.Router.Group("/api")
 	if config.Version != "" {
 		api = api.Group(config.Version)
@@ -46,16 +46,16 @@ func RegisterRoutes[M Model, ReqDTO any, ResDTO any](router *RouteHandler[M, Req
 	}
 }
 
-type RouteHandler[M Model, ReqDTO any, ResDTO any] struct {
-	Handler Handler
+type RouteHandler[M Model] struct {
+	Handler Handler[M]
 	Router  *gin.Engine
 }
 
-func NewRouteHandler[M Model, ReqDTO any, ResDTO any](
-	handler Handler,
+func NewRouteHandler[M Model](
+	handler Handler[M],
 	router *gin.Engine,
-) *RouteHandler[M, ReqDTO, ResDTO] {
-	return &RouteHandler[M, ReqDTO, ResDTO]{
+) *RouteHandler[M] {
+	return &RouteHandler[M]{
 		Handler: handler,
 		Router:  router,
 	}

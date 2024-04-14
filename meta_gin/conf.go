@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type SetupConfig[M Model, ReqDTO, ResDTO any] struct {
+type SetupConfig[M Model] struct {
 	Router      *gin.Engine
 	Config      *Config
 	Version     string
@@ -14,86 +14,18 @@ type SetupConfig[M Model, ReqDTO, ResDTO any] struct {
 	routeConfig *RouteConfig
 }
 
-// CRUD
-// type CRUDConfig[M Model, ReqDTO, ResDTO any] struct {
-// 	SetupConfig[M, ReqDTO, ResDTO]
-// 	Handler *CRUDHandler[M, ReqDTO, ResDTO]
-// }
-
-// func SetupCRUDRoutesForModel[M Model, ReqDTO, ResDTO any](
-// 	setupConfig CRUDConfig[M, ReqDTO, ResDTO],
-// ) {
-// 	routeHandler := NewRouteHandler[M, ReqDTO, ResDTO](setupConfig.Handler, setupConfig.Router)
-// 	handler := setupConfig.Handler
-// 	if setupConfig.routeConfig == nil {
-// 		setupConfig.routeConfig = &RouteConfig{
-// 			Version:   setupConfig.Version,
-// 			GroupName: setupConfig.GroupName,
-// 			Routes: []RouteInfo{
-// 				{
-// 					Path:        "/",
-// 					Method:      "POST",
-// 					Handler:     AddDecorators(handler.Create(nil), setupConfig.Decorators),
-// 					Middlewares: setupConfig.Middlewares,
-// 				},
-
-// 				{
-// 					Path:        "/",
-// 					Method:      "GET",
-// 					Handler:     AddDecorators(handler.ListPagination(nil), setupConfig.Decorators),
-// 					Middlewares: setupConfig.Middlewares,
-// 				},
-// 				{
-// 					Path:        ":id/",
-// 					Method:      "GET",
-// 					Handler:     AddDecorators(handler.Get(nil), setupConfig.Decorators),
-// 					Middlewares: setupConfig.Middlewares,
-// 				},
-// 				{
-// 					Path:        "/all/",
-// 					Method:      "GET",
-// 					Handler:     AddDecorators(handler.List(nil), setupConfig.Decorators),
-// 					Middlewares: setupConfig.Middlewares,
-// 				},
-
-// 				{
-// 					Path:        ":id/",
-// 					Method:      "PUT",
-// 					Handler:     AddDecorators(handler.Update(nil), setupConfig.Decorators),
-// 					Middlewares: setupConfig.Middlewares,
-// 				},
-// 				{
-// 					Path:        ":id/",
-// 					Method:      "DELETE",
-// 					Handler:     AddDecorators(handler.DeleteByID(nil), setupConfig.Decorators),
-// 					Middlewares: setupConfig.Middlewares,
-// 				},
-// 				{
-// 					Path:        "/",
-// 					Method:      "DELETE",
-// 					Handler:     AddDecorators(handler.Delete(nil), setupConfig.Decorators),
-// 					Middlewares: setupConfig.Middlewares,
-// 				},
-// 			},
-// 		}
-// 	}
-
-// 	RegisterRoutes[M, ReqDTO, ResDTO](routeHandler, *setupConfig.routeConfig)
-// }
-
-// CREATE
-type GenericConfig[M Model, ReqDTO, ResDTO any] struct {
-	SetupConfig[M, ReqDTO, ResDTO]
-	Handlers []Handler
+type GenericConfig[M Model] struct {
+	SetupConfig[M]
+	Handlers []Handler[M]
 }
 
-func SetupGenericRouteForModel[M Model, ReqDTO, ResDTO any](
-	setupConfig GenericConfig[M, ReqDTO, ResDTO],
+func SetupGenericRouteForModel[M Model](
+	setupConfig GenericConfig[M],
 ) {
 	routes := []RouteInfo{}
-	routeHandler := &RouteHandler[M, ReqDTO, ResDTO]{}
+	routeHandler := &RouteHandler[M]{}
 	for _, handler := range setupConfig.Handlers {
-		routeHandler = NewRouteHandler[M, ReqDTO, ResDTO](handler, setupConfig.Router)
+		routeHandler = NewRouteHandler[M](handler, setupConfig.Router)
 		for p, h := range handler.Handlers() {
 			routes = append(routes, RouteInfo{
 				Path:        p,
