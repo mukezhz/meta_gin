@@ -47,12 +47,12 @@ func RegisterRoutes[M Model, ReqDTO any, ResDTO any](router *RouteHandler[M, Req
 }
 
 type RouteHandler[M Model, ReqDTO any, ResDTO any] struct {
-	Handler *CRUDHandler[M, ReqDTO, ResDTO]
+	Handler Handler
 	Router  *gin.Engine
 }
 
 func NewRouteHandler[M Model, ReqDTO any, ResDTO any](
-	handler *CRUDHandler[M, ReqDTO, ResDTO],
+	handler Handler,
 	router *gin.Engine,
 ) *RouteHandler[M, ReqDTO, ResDTO] {
 	return &RouteHandler[M, ReqDTO, ResDTO]{

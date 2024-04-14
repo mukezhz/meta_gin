@@ -1,6 +1,8 @@
 package meta_gin
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type SortOrder string
 
@@ -26,7 +28,8 @@ func NewRepository[M any](db *gorm.DB) *Repository[M] {
 }
 
 func (r *Repository[M]) Create(model M) (M, error) {
-	return model, r.DB.Create(&model).Error
+	err := r.DB.Create(&model).Error
+	return model, err
 }
 
 func (r *Repository[M]) FindOrCreate(model M) error {
