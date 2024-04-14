@@ -20,7 +20,8 @@ As a lazy software engineer, I don't want to write the same code repeatedly, whi
 ---
 
 ## This much code for the CRUD 🕶️
-![meta_gin](https://github.com/mukezhz/meta_gin/assets/43813670/dc033fce-b7fb-40d4-a110-f846172e5a2c)
+![image](https://github.com/mukezhz/meta_gin/assets/43813670/681dcb65-1dea-47c8-b01f-87e26d67cf7e)
+
 
 Please check example
 
