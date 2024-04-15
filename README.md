@@ -26,6 +26,16 @@ Efficient CRUD operations with minimal code:
 
 For usage examples, please check the `examples` directory in the repository.
 
+## Installation
+- Initiate a go project:
+```
+go mod init <module>
+````
+- Add a meta_gin as dependency:
+```
+go get github.com/mukezhz/meta_gin
+```
+
 ## Roadmap
 
 - [ ] Support for custom middleware integration.
