@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/mukezhz/meta_gin"
 	"github.com/mukezhz/meta_gin/example/post"
 	"github.com/mukezhz/meta_gin/example/user"
-	"github.com/mukezhz/meta_gin/meta_gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )

@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/mukezhz/meta_gin/meta_gin"
+	"github.com/mukezhz/meta_gin"
 )
 
 func SetupUser(m *meta_gin.MetaGin) {
