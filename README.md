@@ -1,39 +1,42 @@
-# meta_gin: Meta Framework of Gin
+# meta_gin: A Meta Framework for Gin
 
-**NOTE: Please don't use this in production we are testing it.**
+**WARNING:**
+- This project is currently in the alpha stage. **Do not use in production environments.**
+- The structure of the project is subject to change until it reaches version 1.0.0.
 
-**NOTE: Structure of the projected is subjected to change util it reaches 1.0.0**
+## Motivation
 
-## Reason to develop:
+As a software engineer who values efficiency, I found myself repeatedly writing similar code for different projects. This inspired the creation of `meta_gin`, a framework designed to simplify and streamline web development with Gin and Gorm.
 
-```
-As a lazy software engineer, I don't want to write the same code repeatedly, which gave rise to this creation.
-```
+## Design Principles
 
-## Consideration while developing this framework:
+`meta_gin` is crafted with the following considerations to empower developers:
 
-- developer should have full control of their project structure
-- developer should use gin and gorm
-- developer shouldn't need to write same CRUD again and again
-- developer should focus on writing business logic than configuring
-- less code ==  less bug
----
+- **Flexibility in Structure**: Developers have full control over their project structure.
+- **Mandatory Tools**: Utilizes [Gin](https://github.com/gin-gonic/gin) and [Gorm](https://gorm.io) for routing and ORM functionality.
+- **CRUD Operations Simplified**: Write less CRUD code, focus more on unique business logic.
+- **Configuration Simplicity**: Minimize setup and configuration code to reduce bugs and development time.
+- **Efficiency**: Less code means fewer bugs.
 
-## This much code for the CRUD 🕶️
-![image](https://github.com/mukezhz/meta_gin/assets/43813670/681dcb65-1dea-47c8-b01f-87e26d67cf7e)
+## Features
 
+Efficient CRUD operations with minimal code:
 
-Please check example
+![CRUD Example](https://github.com/mukezhz/meta_gin/assets/43813670/681dcb65-1dea-47c8-b01f-87e26d67cf7e)
 
-### TODO:
-- [ ] allow support to add custom middlewares
-- [ ] allow support to add extend the CRUD by injecting custom logic
-- [ ] make structure cleaner and less bloat
-- [ ] use this framework and build demo project
+For usage examples, please check the `examples` directory in the repository.
 
-## Contribution
-- As I am learning Go and Gin myself, I would love to see your feedback and suggestions.
-- Feel free to open [issue](https://github.com/mukezhz/meta_gin/issues/new) before PR
+## Roadmap
 
----
-**HAPPY CODING!!! 🙇‍♂️**
+- [ ] Support for custom middleware integration.
+- [ ] Extension points for custom CRUD logic.
+- [ ] Streamline the framework structure for enhanced clarity and reduced bloat.
+- [ ] Development of a demo project using `meta_gin`.
+
+## Contributing
+
+As I continue to learn more about Go and the Gin framework, I welcome your feedback and contributions:
+- Please start by opening an [issue](https://github.com/mukezhz/meta_gin/issues/new) to discuss potential changes before submitting a pull request.
+
+**Let's code something amazing together! Happy coding! 🙇**
+
