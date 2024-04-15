@@ -36,6 +36,8 @@ go mod init <module>
 go get github.com/mukezhz/meta_gin
 ```
 
+[example](https://github.com/mukezhz/meta_gin/tree/main/example)
+
 ## Roadmap
 
 - [ ] Support for custom middleware integration.
