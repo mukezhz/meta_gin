@@ -27,11 +27,10 @@ func main() {
 	router := gin.Default()
 	router.Use(meta_gin.AuthMiddleware(config, "admin"))
 
-	user.GetUserConfig(db, config, router)
-	post.GetPostConfig(db, config, router)
+	m := meta_gin.NewMetaGin(router, db, config)
 
-	err = router.Run(":8888")
-	if err != nil {
-		panic("failed to run server")
-	}
+	user.SetupUser(m)
+	post.SetupPost(m)
+
+	m.Run(":8888")
 }

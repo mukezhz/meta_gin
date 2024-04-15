@@ -2,7 +2,6 @@ package meta_gin
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -76,7 +75,7 @@ func (h *ReadHandler[M, ReqDTO, ResDTO]) ListPagination() gin.HandlerFunc {
 		if p, err := strconv.ParseInt(ctx.Query("page"), 10, 0); err == nil {
 			page = int(p)
 		}
-		log.Println("page", page, "limit", limit, "Executors:::", len(h.ServiceExecuters))
+
 		for _, queryExecutor := range h.ServiceExecuters {
 			if queryExecutor != nil {
 				c := context.WithValue(ctx.Request.Context(), pageLimit, PaginationRequest{
