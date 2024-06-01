@@ -40,7 +40,7 @@ go get github.com/mukezhz/meta_gin
 
 ## Roadmap
 
-- [ ] Support for custom middleware integration.
+- [x] Support for custom middleware integration.
 - [ ] Extension points for custom CRUD logic.
 - [ ] Streamline the framework structure for enhanced clarity and reduced bloat.
 - [ ] Development of a demo project using `meta_gin`.
